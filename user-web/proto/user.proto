@@ -1,0 +1,73 @@
+//  python -m grpc_tools.protoc --python_out=. --grpc_python_out=. -I.  user.proto
+// protoc -I . user.proto --go_out=plugins=grpc:.
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option go_package = "/.;proto";
+
+service User{
+  rpc GetUserInfoByMobile(MobileRequest) returns(UserInfoResponse); // 通过手机号获取用户信息
+  rpc GetUserInfoById(IdRequest) returns(UserInfoResponse); // 通过id获取用户信息
+  rpc GetUserList(PageInfo) returns(UserListResponse); // 获取用户列表
+  rpc CreateUser(CreateUserInfo) returns(UserInfoResponse); // 注册用户
+  rpc UpdateUser(UserInfo) returns(google.protobuf.Empty); // 编辑用户
+  rpc CheckPassword(CheckPasswordInfo) returns(CheckResponse); // 验证用户密码
+}
+
+
+
+message MobileRequest{
+  string mobile = 1;
+}
+message IdRequest{
+  uint32 id = 1;
+}
+message CheckPasswordInfo{
+  string mobile = 1;
+  string password = 2; // 输入的密码
+  string encryptPassword = 3; // 原密码
+}
+message CheckResponse{
+  bool success = 1;
+}
+
+message UserInfoResponse{
+  uint32 id = 1;
+  string mobile = 2;
+  string password = 3;
+  string nickname = 4;
+  int32 gender = 5;
+  uint64 birthday = 6;
+  string headUrl = 7;
+  string orangeKey = 8;
+}
+
+message CreateUserInfo{
+  string mobile = 1;
+  string password = 2;
+  string nickname = 3;
+}
+message UserInfo{
+  uint32 id = 1;
+  string mobile = 2;
+  string password = 3;
+  string nickname = 4;
+  int32 gender = 5;
+  uint64 birthday = 6;
+  string headUrl = 7;
+  string orangeKey = 8;
+}
+
+message PageInfo{
+  uint32 page = 1;
+  uint32 limit = 2;
+}
+message UserListResponse{
+  uint32 total = 1;
+  repeated UserInfoResponse data = 2;
+}
+
+
+
+
