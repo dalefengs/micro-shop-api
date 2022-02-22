@@ -9,7 +9,7 @@ import (
 // 全局变量
 
 var (
-	Trans       ut.Translator
-	Config      *config.Config   // 配置文件全局
-	UserSrvConn proto.UserClient // 用户服务连接对象
+	Trans         ut.Translator
+	Config        *config.Config   // 配置文件全局
+	UserSrvClient proto.UserClient // 用户服务连接对象
 )

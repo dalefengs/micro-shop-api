@@ -2,11 +2,7 @@ package api
 
 import (
 	"context"
-	"fmt"
 	"io"
-	"micro-shop-api/user-web/extends/aliyun/dysmsapi"
-	"micro-shop-api/user-web/extends/jwtauth"
-	"micro-shop-api/user-web/validator/forms"
 	"net/http"
 	"strconv"
 	"time"
@@ -17,11 +13,14 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"micro-shop-api/user-web/extends/aliyun/dysmsapi"
+	"micro-shop-api/user-web/extends/jwtauth"
 	"micro-shop-api/user-web/global"
 	"micro-shop-api/user-web/global/response"
 	status2 "micro-shop-api/user-web/global/status"
 	"micro-shop-api/user-web/proto"
 	"micro-shop-api/user-web/utils"
+	"micro-shop-api/user-web/validator/forms"
 )
 
 // 生成UserResponse 实例
@@ -79,7 +78,7 @@ func GetUserList(ctx *gin.Context) {
 		Page:  uint32(pnInt),
 		Limit: uint32(pSizeInt),
 	}
-	rsp, err := global.UserSrvConn.GetUserList(context.Background(), &pageInfo)
+	rsp, err := global.UserSrvClient.GetUserList(context.Background(), &pageInfo)
 	if err != nil {
 		zap.S().Errorw("[GetUserList] 查询 [用户列表] 失败",
 			"msg", err.Error())
@@ -116,7 +115,7 @@ func PasswordLogin(c *gin.Context) {
 		return
 	}
 
-	uInfo, err := global.UserSrvConn.GetUserInfoByMobile(c, &proto.MobileRequest{Mobile: pwdLoginForm.Mobile})
+	uInfo, err := global.UserSrvClient.GetUserInfoByMobile(c, &proto.MobileRequest{Mobile: pwdLoginForm.Mobile})
 	if err != nil {
 		// 没有查找到用户信息
 		if s, ok := status.FromError(err); ok {
@@ -132,8 +131,7 @@ func PasswordLogin(c *gin.Context) {
 		return
 	}
 	// 验证密码
-	fmt.Println(uInfo)
-	if err := CheckPassword(c, global.UserSrvConn, uInfo.Mobile, pwdLoginForm.Password); err != nil {
+	if err := CheckPassword(c, uInfo.Mobile, pwdLoginForm.Password); err != nil {
 		zap.S().Infof("验证密码异常%v", err)
 		// 没有查找到信息
 		if s, ok := status.FromError(err); ok {
@@ -168,8 +166,8 @@ func PasswordLogin(c *gin.Context) {
 }
 
 // CheckPassword 验证密码
-func CheckPassword(ctx *gin.Context, client proto.UserClient, mobile string, password string) (err error) {
-	rsp, err := client.CheckPassword(ctx, &proto.CheckPasswordInfo{Mobile: mobile, Password: password})
+func CheckPassword(ctx *gin.Context, mobile string, password string) (err error) {
+	rsp, err := global.UserSrvClient.CheckPassword(ctx, &proto.CheckPasswordInfo{Mobile: mobile, Password: password})
 	if err == nil && rsp.Success {
 		return nil
 	}
@@ -204,7 +202,7 @@ func RegisterUser(c *gin.Context) {
 		Password: createUserInfo.Password,
 	}
 
-	uRsp, err := global.UserSrvConn.CreateUser(context.Background(), &cuInfo)
+	uRsp, err := global.UserSrvClient.CreateUser(context.Background(), &cuInfo)
 	if err != nil {
 		if gerr, ok := status.FromError(err); ok {
 			switch gerr.Code() {

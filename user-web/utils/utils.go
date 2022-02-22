@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/viper"
 	"math/rand"
+	"net"
 	"strings"
 	"time"
 )
@@ -43,4 +44,19 @@ func GenValidateCode(codeLen int) string {
 		_, _ = fmt.Fprintf(&code, "%d", numeric[rand.Intn(nr)])
 	}
 	return code.String()
+}
+
+// GetFreePort 获取可用端口
+func GetFreePort() (port int, err error) {
+	addr, err := net.ResolveTCPAddr("tcp", "localhost:0")
+	if err != nil {
+		return 0, err
+	}
+	l, err := net.ListenTCP("tcp", addr)
+	if err != nil {
+		return 0, err
+	}
+	defer l.Close()
+	port = l.Addr().(*net.TCPAddr).Port
+	return port, nil
 }

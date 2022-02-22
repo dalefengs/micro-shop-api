@@ -2,46 +2,30 @@ package initialize
 
 import (
 	"fmt"
-	"github.com/hashicorp/consul/api"
+
+	_ "github.com/mbobakov/grpc-consul-resolver"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+
 	"micro-shop-api/user-web/global"
 	"micro-shop-api/user-web/proto"
 )
 
 func InitSrvConnect() {
-
+	initUserSrvConnect()
 }
 
-func InitUserSrvConnect() {
-	cfg := api.DefaultConfig()
-	consulCfg := global.Config.Consul
-	cfg.Address = fmt.Sprintf("%s:%d", consulCfg.Host, consulCfg.Port)
-	cClient, err := api.NewClient(cfg)
+//  初始化用户服务
+func initUserSrvConnect() {
+	consulInfo := global.Config.Consul
+	conn, err := grpc.Dial(fmt.Sprintf("consul://%s:%d/%s?wait=14s", consulInfo.Host, consulInfo.Port, global.Config.Services.UserSrvName),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy": "round_robin"}`),
+	)
 	if err != nil {
-		zap.S().Errorw("[GetUserList] 连接 [注册中心失败]")
+		zap.S().Errorw("[GetUserList] 连接 [用户服务失败]")
 		panic(err)
 	}
-	filter, err := cClient.Agent().ServicesWithFilter(fmt.Sprintf(`Service == "%s"`, global.Config.Services.UserSrvName))
-	if err != nil || len(filter) == 0 {
-		zap.S().Errorw("[GetUserList] 查找 [用户服务失败]",
-			"msg", err)
-		panic(err)
-	}
-	userSrvHost := ""
-	userSrvPort := 0
-
-	for _, item := range filter {
-		userSrvHost = item.Address
-		userSrvPort = item.Port
-	}
-
-	userConn, err := grpc.Dial(fmt.Sprintf("%s:%d", userSrvHost, userSrvPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		zap.S().Errorw("[GetUserList] 连接 [用户服务失败]",
-			"msg", err.Error())
-		panic(err)
-	}
-	global.UserSrvConn = proto.NewUserClient(userConn)
+	global.UserSrvClient = proto.NewUserClient(conn)
 }

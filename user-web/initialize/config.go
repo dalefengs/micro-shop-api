@@ -43,7 +43,6 @@ func InitConfig() {
 		panic(err)
 	}
 	// 动态监听配置文件变化
-	zap.S().Infof("配置信息：%v", global.Config)
 	v.WatchConfig()
 	v.OnConfigChange(func(in fsnotify.Event) {
 		if err := v.ReadInConfig(); err != nil {
