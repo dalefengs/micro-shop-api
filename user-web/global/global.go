@@ -10,6 +10,7 @@ import (
 
 var (
 	Trans         ut.Translator
-	Config        *config.Config   // 配置文件全局
+	Config        *config.Config   // 配置文件全局从Nacos中获取
+	NacosConfig   *config.Nacos    // Nacos 配置
 	UserSrvClient proto.UserClient // 用户服务连接对象
 )

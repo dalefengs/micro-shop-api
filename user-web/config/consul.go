@@ -1,7 +1,7 @@
 package config
 
 type consulConfig struct {
-	Host string   `mapstructure:"host"`
-	Port int      `mapstructure:"port"`
-	Tags []string `mapstructure:"tags"`
+	Host string   `mapstructure:"host" json:"host"`
+	Port int      `mapstructure:"port" json:"port"`
+	Tags []string `mapstructure:"tags" json:"tags"`
 }
