@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/golang-jwt/jwt"
 	"go.uber.org/zap"
-	"micro-shop-api/user-web/global"
+	"micro-shop-api/goods-web/global"
 	"time"
 )
 
@@ -24,7 +24,7 @@ func NewCustomClaimsDefault(id uint, mobile string, nickname string) *CustomClai
 		Nickname: nickname,
 		StandardClaims: jwt.StandardClaims{
 			NotBefore: beforeTime,
-			ExpiresAt: beforeTime + 60*60*24*100,
+			ExpiresAt: beforeTime + 60*60*24,
 			Issuer:    "lzscxb",
 		},
 	}

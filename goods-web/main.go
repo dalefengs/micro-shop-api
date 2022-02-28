@@ -6,13 +6,13 @@ import (
 	"os/signal"
 	"syscall"
 
-	uuid "github.com/satori/go.uuid"
+	"github.com/satori/go.uuid"
 	"go.uber.org/zap"
 
-	"micro-shop-api/user-web/global"
-	"micro-shop-api/user-web/initialize"
-	"micro-shop-api/user-web/utils"
-	"micro-shop-api/user-web/utils/register/consul"
+	"micro-shop-api/goods-web/global"
+	"micro-shop-api/goods-web/initialize"
+	"micro-shop-api/goods-web/utils"
+	"micro-shop-api/goods-web/utils/register/consul"
 )
 
 func main() {
@@ -37,6 +37,7 @@ func main() {
 			global.Config.Port = port
 		}
 	}
+
 	// 将服务启动放入协程中，当接收到终止信号后，主进程销毁，协称也会随着销毁
 	go func() {
 		zap.S().Infof("%s 服务启动！ http://%s:%d", global.Config.Name, global.Config.Host, global.Config.Port)
@@ -66,5 +67,4 @@ func main() {
 		zap.S().Fatalw("服务注销失败", err.Error())
 	}
 	zap.S().Infow("服务注销成功")
-
 }
