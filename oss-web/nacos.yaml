@@ -1,0 +1,30 @@
+name: "oss-web"
+port: 8021
+# 服务名称
+services:
+  user_srv_name: "user-srv"
+
+jwt:
+  key: "WXlqEk8BJXmAjtp"
+
+# lzscxb@1476059396974402.onaliyun.com
+aliyun:
+  accessKeyId: "s"
+  accessKeySecret: ""
+  sms:
+    signName: ""
+    templateCode: ""
+    expire: 300 # 秒
+
+redis:
+  host: "172.17.0.1"
+  port: 6379
+  prefix:
+    users: "users:" # 用户信息
+    register: "register_code:" # 注册短信验证码
+    forget: "forget_code:" # 找回密码短信验证码
+
+consul:
+  host: "172.17.0.1"
+  port: 8500
+  tags: [ "web","golang" ]
