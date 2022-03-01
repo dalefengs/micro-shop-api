@@ -24,6 +24,7 @@ var (
 	AlreadyExists = Code{1022, "用户已存在"}
 
 	// 商品服务 3000 - 4000
+	GoodsNotFind = Code{3000, "商品不存在"}
 )
 
 type Code struct {

@@ -17,6 +17,7 @@ var (
 	CodeIncorrect             = Code{1014, "验证码不正确"}
 	RegisterCenterConnectFail = Code{1015, "连接注册中心失败"}
 	ServerNotFind             = Code{1016, "服务丢失或未找到"}
+	NotFound                  = Code{1017, "不存在"}
 
 	NotFoundUser  = Code{1020, "用户不存在"}
 	PasswordError = Code{1021, "账号或密码错误"}
