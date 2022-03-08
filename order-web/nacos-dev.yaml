@@ -1,0 +1,8 @@
+# Nacos 配置
+host: "172.17.0.1"
+port: 8848
+user: "nacos"
+password: "000"
+name_space: "383cdcfc-f625-4d46-a2bd-908c20eac5f7" # 命名空间
+group: "dev"
+goods_api_data_id: "order-api"
